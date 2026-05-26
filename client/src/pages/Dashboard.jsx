@@ -136,7 +136,7 @@ export default function Dashboard() {
 
       {/* Step History */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100">
+        <div className={`px-6 py-4 ${entries.length > 0 ? 'border-b border-gray-100' : ''}`}>
           <h3 className="text-lg font-semibold">Recent Entries</h3>
         </div>
         {entries.length === 0 ? (
