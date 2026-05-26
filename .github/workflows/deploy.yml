@@ -21,6 +21,11 @@ jobs:
           npm install
           npm run build
 
+      - name: Add root redirect
+        run: |
+          echo '<html><head><meta http-equiv="refresh" content="0;url=/steptracker/"></head></html>' > client/dist/redirect.html
+          cp client/dist/index.html client/dist/404.html
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:

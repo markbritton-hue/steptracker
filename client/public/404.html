@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>StepTracker</title>
+    <script>
+      // GitHub Pages SPA redirect trick
+      var path = window.location.pathname;
+      var search = window.location.search;
+      var hash = window.location.hash;
+      var redirect = '/?p=' + encodeURIComponent(path + search) + hash;
+      window.location.replace('/steptracker/' + redirect.slice(1));
+    </script>
+  </head>
+  <body></body>
+</html>
