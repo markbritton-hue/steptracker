@@ -55,13 +55,17 @@ export default function Dashboard() {
     setError('');
     try {
       const docId = `${user.uid}_${form.date}`;
+      const existing = entries.find(e => e.date === form.date);
+      if (existing) {
+        if (!confirm(`You already logged ${existing.steps.toLocaleString()} steps on ${form.date}. Replace with ${parseInt(form.steps).toLocaleString()}?`)) return;
+      }
       await setDoc(doc(db, 'stepEntries', docId), {
         userId: user.uid,
         date: form.date,
         steps: parseInt(form.steps),
         updatedAt: new Date().toISOString(),
       });
-      setMsg('✅ Steps saved!');
+      setMsg(existing ? '✅ Steps updated!' : '✅ Steps saved!');
       setForm({ ...form, steps: '' });
       loadData();
     } catch (err) {
