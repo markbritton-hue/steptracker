@@ -25,6 +25,9 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#0f1117' }}>
       <div className="w-full max-w-sm rounded-xl p-8" style={{ background: '#1a1d27', border: '1px solid #2d3148' }}>
+        <div className="flex justify-center mb-4">
+          <img src="/steptracker/pivotal logo.png" alt="Pivotal Logo" className="h-16 object-contain" />
+        </div>
         <h1 className="text-2xl font-bold text-center text-white mb-1">🏃 StepTracker</h1>
         <p className="text-center text-slate-400 text-sm mb-6">Company Step Challenge</p>
 
