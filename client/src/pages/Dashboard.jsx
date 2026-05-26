@@ -4,10 +4,10 @@ import { auth, db } from '../firebase';
 
 function StatCard({ label, value, sub }) {
   return (
-    <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-      <p className="text-sm text-gray-500">{label}</p>
-      <p className="text-3xl font-bold text-gray-900 mt-1">{typeof value === 'number' ? value.toLocaleString() : value}</p>
-      {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
+    <div className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm">
+      <p className="text-xs text-gray-500">{label}</p>
+      <p className="text-xl font-bold text-gray-900 mt-0.5">{typeof value === 'number' ? value.toLocaleString() : value}</p>
+      {sub && <p className="text-xs text-gray-400">{sub}</p>}
     </div>
   );
 }
@@ -97,23 +97,23 @@ export default function Dashboard() {
       </div>
 
       {/* Log Steps */}
-      <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-        <h3 className="text-lg font-semibold mb-4">Log Steps</h3>
-        {msg && <div className="mb-3 p-2 bg-green-50 text-green-700 rounded text-sm">{msg}</div>}
-        {error && <div className="mb-3 p-2 bg-red-50 text-red-700 rounded text-sm">{error}</div>}
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 sm:items-end">
+      <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+        <h3 className="text-lg font-semibold mb-4">Log My Steps</h3>
+        {msg && <div className="mb-3 p-3 bg-green-50 text-green-700 rounded-lg text-sm font-medium">{msg}</div>}
+        {error && <div className="mb-3 p-3 bg-red-50 text-red-700 rounded-lg text-sm">{error}</div>}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
             <input
               type="date"
               value={form.date}
               max={new Date().toISOString().split('T')[0]}
               onChange={(e) => setForm({ ...form, date: e.target.value })}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Steps</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Steps</label>
             <input
               type="number"
               required
@@ -121,15 +121,15 @@ export default function Dashboard() {
               max="100000"
               value={form.steps}
               onChange={(e) => setForm({ ...form, steps: e.target.value })}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full sm:w-32 focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-brand-500"
               placeholder="e.g. 8500"
             />
           </div>
           <button
             type="submit"
-            className="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-5 rounded-lg transition-colors text-sm w-full sm:w-auto"
+            className="bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-5 rounded-xl transition-colors text-base w-full"
           >
-            Save
+            💾 Save Steps
           </button>
         </form>
       </div>
