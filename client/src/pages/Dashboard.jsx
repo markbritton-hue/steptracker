@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
-import { collection, doc, setDoc, deleteDoc, query, where, orderBy, limit, getDocs, getDoc } from 'firebase/firestore';
+import { collection, doc, setDoc, deleteDoc, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
-function StatCard({ label, value, sub }) {
+function StatCard({ label, value }) {
   return (
-    <div className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm">
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-xl font-bold text-gray-900 mt-0.5">{typeof value === 'number' ? value.toLocaleString() : value}</p>
-      {sub && <p className="text-xs text-gray-400">{sub}</p>}
+    <div className="rounded-lg p-3" style={{ background: '#1a1d27', border: '1px solid #2d3148' }}>
+      <p className="text-xs text-slate-500 uppercase tracking-wide font-semibold">{label}</p>
+      <p className="text-xl font-bold text-white mt-1">{typeof value === 'number' ? value.toLocaleString() : value}</p>
     </div>
   );
 }
@@ -22,19 +21,11 @@ export default function Dashboard() {
 
   async function loadData() {
     if (!user) return;
-
-    // Load recent entries
-    const q = query(
-      collection(db, 'stepEntries'),
-      where('userId', '==', user.uid),
-      orderBy('date', 'desc'),
-      limit(90)
-    );
+    const q = query(collection(db, 'stepEntries'), where('userId', '==', user.uid), orderBy('date', 'desc'), limit(90));
     const snap = await getDocs(q);
     const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     setEntries(data);
 
-    // Compute stats
     const today = new Date().toISOString().split('T')[0];
     const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
     const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
@@ -43,7 +34,6 @@ export default function Dashboard() {
     const weekTotal = data.filter(e => e.date >= weekAgo).reduce((s, e) => s + e.steps, 0);
     const monthTotal = data.filter(e => e.date >= monthStart).reduce((s, e) => s + e.steps, 0);
 
-    // Compute rank — get all users' month totals
     const allQ = query(collection(db, 'stepEntries'), where('date', '>=', monthStart));
     const allSnap = await getDocs(allQ);
     const totals = {};
@@ -71,7 +61,7 @@ export default function Dashboard() {
         steps: parseInt(form.steps),
         updatedAt: new Date().toISOString(),
       });
-      setMsg('Steps saved!');
+      setMsg('✅ Steps saved!');
       setForm({ ...form, steps: '' });
       loadData();
     } catch (err) {
@@ -86,34 +76,36 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold">My Dashboard</h2>
+    <div className="space-y-5">
+      <h2 className="text-xl font-bold text-white">My Dashboard</h2>
 
+      {/* Stat Cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard label="Today" value={stats.today} sub="steps" />
-        <StatCard label="This Week" value={stats.week} sub="steps" />
-        <StatCard label="This Month" value={stats.month} sub="steps" />
-        <StatCard label="My Rank" value={`#${stats.rank}`} sub="this month" />
+        <StatCard label="Today" value={stats.today} />
+        <StatCard label="This Week" value={stats.week} />
+        <StatCard label="This Month" value={stats.month} />
+        <StatCard label="My Rank" value={`#${stats.rank}`} />
       </div>
 
       {/* Log Steps */}
-      <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-        <h3 className="text-lg font-semibold mb-4">Log My Steps</h3>
-        {msg && <div className="mb-3 p-3 bg-green-50 text-green-700 rounded-lg text-sm font-medium">{msg}</div>}
-        {error && <div className="mb-3 p-3 bg-red-50 text-red-700 rounded-lg text-sm">{error}</div>}
+      <div className="rounded-xl p-5" style={{ background: '#1a1d27', border: '1px solid #2d3148' }}>
+        <h3 className="text-base font-semibold text-white mb-4">Log My Steps</h3>
+        {msg && <div className="mb-3 p-3 rounded-lg text-sm font-medium" style={{ background: '#064e3b', color: '#6ee7b7' }}>{msg}</div>}
+        {error && <div className="mb-3 p-3 rounded-lg text-sm" style={{ background: '#7f1d1d', color: '#fca5a5' }}>{error}</div>}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Date</label>
             <input
               type="date"
               value={form.date}
               max={new Date().toISOString().split('T')[0]}
               onChange={(e) => setForm({ ...form, date: e.target.value })}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full rounded-lg px-4 py-3 text-base text-white outline-none focus:ring-2 focus:ring-blue-500"
+              style={{ background: '#13151f', border: '1px solid #2d3148' }}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Steps</label>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Steps</label>
             <input
               type="number"
               required
@@ -121,13 +113,15 @@ export default function Dashboard() {
               max="100000"
               value={form.steps}
               onChange={(e) => setForm({ ...form, steps: e.target.value })}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full rounded-lg px-4 py-3 text-base text-white outline-none focus:ring-2 focus:ring-blue-500"
+              style={{ background: '#13151f', border: '1px solid #2d3148' }}
               placeholder="e.g. 8500"
             />
           </div>
           <button
             type="submit"
-            className="bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-5 rounded-xl transition-colors text-base w-full"
+            className="w-full font-bold py-4 rounded-xl text-base text-white transition-colors"
+            style={{ background: '#4f8ef7' }}
           >
             💾 Save Steps
           </button>
@@ -135,30 +129,28 @@ export default function Dashboard() {
       </div>
 
       {/* Step History */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className={`px-6 py-4 ${entries.length > 0 ? 'border-b border-gray-100' : ''}`}>
-          <h3 className="text-lg font-semibold">Recent Entries</h3>
+      <div className="rounded-xl overflow-hidden" style={{ background: '#1a1d27', border: '1px solid #2d3148' }}>
+        <div className="px-5 py-4" style={{ borderBottom: entries.length > 0 ? '1px solid #2d3148' : 'none' }}>
+          <h3 className="font-semibold text-white">Recent Entries</h3>
         </div>
         {entries.length === 0 ? (
-          <p className="px-6 py-8 text-center text-gray-400">No steps logged yet. Start tracking!</p>
+          <p className="px-5 py-8 text-center text-slate-500">No steps logged yet. Start tracking!</p>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50">
+            <thead style={{ background: '#212435' }}>
               <tr>
-                <th className="text-left px-6 py-3 text-gray-500 font-medium">Date</th>
-                <th className="text-right px-6 py-3 text-gray-500 font-medium">Steps</th>
-                <th className="px-6 py-3"></th>
+                <th className="text-left px-5 py-3 text-slate-400 font-medium">Date</th>
+                <th className="text-right px-5 py-3 text-slate-400 font-medium">Steps</th>
+                <th className="px-5 py-3"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody>
               {entries.map((e) => (
-                <tr key={e.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-3 text-gray-700">{e.date}</td>
-                  <td className="px-6 py-3 text-right font-semibold text-gray-900">{e.steps.toLocaleString()}</td>
-                  <td className="px-6 py-3 text-right">
-                    <button onClick={() => deleteEntry(e.id)} className="text-xs text-red-400 hover:text-red-600">
-                      Delete
-                    </button>
+                <tr key={e.id} style={{ borderBottom: '1px solid #2d3148' }} className="hover:bg-white/5">
+                  <td className="px-5 py-3 text-slate-300">{e.date}</td>
+                  <td className="px-5 py-3 text-right font-semibold text-white">{e.steps.toLocaleString()}</td>
+                  <td className="px-5 py-3 text-right">
+                    <button onClick={() => deleteEntry(e.id)} className="text-xs text-red-400 hover:text-red-300">Delete</button>
                   </td>
                 </tr>
               ))}

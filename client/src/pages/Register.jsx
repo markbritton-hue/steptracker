@@ -17,7 +17,6 @@ export default function Register() {
     try {
       const { user } = await createUserWithEmailAndPassword(auth, form.email, form.password);
       await updateProfile(user, { displayName: form.name });
-      // Save user profile to Firestore
       await setDoc(doc(db, 'users', user.uid), {
         name: form.name,
         email: form.email.toLowerCase(),
@@ -26,74 +25,72 @@ export default function Register() {
       });
       navigate('/');
     } catch (err) {
-      if (err.code === 'auth/email-already-in-use') {
-        setError('Email already registered');
-      } else if (err.code === 'auth/weak-password') {
-        setError('Password must be at least 6 characters');
-      } else {
-        setError('Registration failed. Please try again.');
-      }
+      if (err.code === 'auth/email-already-in-use') setError('Email already registered');
+      else if (err.code === 'auth/weak-password') setError('Password must be at least 6 characters');
+      else setError('Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-center mb-1">🏃 StepTracker</h1>
-        <p className="text-center text-gray-500 text-sm mb-6">Create your account</p>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#0f1117' }}>
+      <div className="w-full max-w-sm rounded-xl p-8" style={{ background: '#1a1d27', border: '1px solid #2d3148' }}>
+        <h1 className="text-2xl font-bold text-center text-white mb-1">🏃 StepTracker</h1>
+        <p className="text-center text-slate-400 text-sm mb-6">Create your account</p>
 
-        {error && <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">{error}</div>}
+        {error && <div className="mb-4 p-3 rounded-lg text-sm" style={{ background: '#7f1d1d', color: '#fca5a5' }}>{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
             <input
               type="text"
               required
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full rounded-lg px-4 py-3 text-base text-white outline-none focus:ring-2 focus:ring-blue-500"
+              style={{ background: '#13151f', border: '1px solid #2d3148' }}
               placeholder="Jane Smith"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Email</label>
             <input
               type="email"
               required
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full rounded-lg px-4 py-3 text-base text-white outline-none focus:ring-2 focus:ring-blue-500"
+              style={{ background: '#13151f', border: '1px solid #2d3148' }}
               placeholder="you@company.com"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
             <input
               type="password"
               required
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full rounded-lg px-4 py-3 text-base text-white outline-none focus:ring-2 focus:ring-blue-500"
+              style={{ background: '#13151f', border: '1px solid #2d3148' }}
               placeholder="Min. 6 characters"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50"
+            className="w-full font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 text-white"
+            style={{ background: '#4f8ef7' }}
           >
             {loading ? 'Creating account...' : 'Create Account'}
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-500 mt-4">
+        <p className="text-center text-sm text-slate-500 mt-4">
           Already have an account?{' '}
-          <Link to="/login" className="text-brand-600 hover:underline font-medium">
-            Sign in
-          </Link>
+          <Link to="/login" className="text-blue-400 hover:underline font-medium">Sign in</Link>
         </p>
       </div>
     </div>
