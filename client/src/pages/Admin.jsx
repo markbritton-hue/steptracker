@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs, doc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
-import { db } from '../firebase';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { db, auth } from '../firebase';
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
@@ -19,6 +20,15 @@ export default function Admin() {
     const newRole = user.role === 'admin' ? 'user' : 'admin';
     await updateDoc(doc(db, 'users', user.id), { role: newRole });
     loadUsers();
+  }
+
+  async function resetPassword(user) {
+    try {
+      await sendPasswordResetEmail(auth, user.email);
+      setMsg(`Password reset email sent to ${user.email}`);
+    } catch (err) {
+      setMsg(`Failed to send reset email to ${user.email}`);
+    }
   }
 
   async function deleteUser(user) {
@@ -97,6 +107,9 @@ export default function Admin() {
                 <td className="px-5 py-3 text-right space-x-3">
                   <button onClick={() => toggleRole(u)} className="text-xs text-blue-400 hover:text-blue-300">
                     {u.role === 'admin' ? 'Make User' : 'Make Admin'}
+                  </button>
+                  <button onClick={() => resetPassword(u)} className="text-xs text-yellow-400 hover:text-yellow-300">
+                    Reset Password
                   </button>
                   <button onClick={() => deleteUser(u)} className="text-xs text-red-400 hover:text-red-300">
                     Delete
