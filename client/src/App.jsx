@@ -46,8 +46,8 @@ export default function App() {
       {user && <Navbar role={role} />}
       <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+          <Route path="/register" element={user ? <Navigate to="/" replace /> : <Register />} />
           <Route path="/" element={<PrivateRoute user={user}><Dashboard /></PrivateRoute>} />
           <Route path="/leaderboard" element={<PrivateRoute user={user}><Leaderboard /></PrivateRoute>} />
           <Route path="/admin" element={<AdminRoute user={user} role={role}><Admin /></AdminRoute>} />

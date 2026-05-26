@@ -15,10 +15,9 @@ export default function Login() {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, form.email, form.password);
-      navigate('/');
+      // Let onAuthStateChanged in App.jsx handle the redirect
     } catch (err) {
       setError('Invalid email or password');
-    } finally {
       setLoading(false);
     }
   }

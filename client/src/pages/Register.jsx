@@ -23,7 +23,7 @@ export default function Register() {
         role: 'user',
         createdAt: serverTimestamp(),
       });
-      navigate('/');
+      // Let onAuthStateChanged in App.jsx handle the redirect
     } catch (err) {
       if (err.code === 'auth/email-already-in-use') setError('Email already registered');
       else if (err.code === 'auth/weak-password') setError('Password must be at least 6 characters');
